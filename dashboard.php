@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/lib/subscriptions.php';
+require_once __DIR__ . '/lib/assets.php';
 $userId = require_login();
 
 $subs = get_user_subscriptions($userId, 'active');
@@ -36,7 +37,7 @@ function renewal_pill(int $d): string {
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="<?= asset_url('assets/styles.css') ?>" />
 </head>
 <body>
 <header class="site-head">
@@ -105,6 +106,6 @@ function renewal_pill(int $d): string {
 </main>
 <footer class="site-foot"><div class="wrap"><p>We'll email you a few days before anything renews so you can decide to keep it or cut it.</p></div></footer>
 <script>window.CATEGORY_SPEND = <?= json_encode($categorySpend) ?>;</script>
-<script src="assets/dashboard.js"></script>
+<script src="<?= asset_url('assets/dashboard.js') ?>"></script>
 </body>
 </html>

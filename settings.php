@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/lib/db.php';
+require_once __DIR__ . '/lib/assets.php';
 require_once __DIR__ . '/config/features.php';
 $userId = require_login();
 
@@ -19,7 +20,7 @@ function esc($s) { return htmlspecialchars((string)$s, ENT_QUOTES); }
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="<?= asset_url('assets/styles.css') ?>" />
 </head>
 <body>
 <header class="site-head">

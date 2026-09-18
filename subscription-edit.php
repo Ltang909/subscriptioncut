@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/lib/subscriptions.php';
+require_once __DIR__ . '/lib/assets.php';
 $userId = require_login();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
@@ -26,7 +27,7 @@ function val($sub, $key, $default = '') { return $sub ? esc($sub[$key]) : $defau
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="<?= asset_url('assets/styles.css') ?>" />
 </head>
 <body>
 <header class="site-head">
