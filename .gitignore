@@ -1,0 +1,4 @@
+config/stripe.local.php
+data/*.sqlite
+data/mail.log
+cron/reminder-log.txt
