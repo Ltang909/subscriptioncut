@@ -12,7 +12,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Remove non-deploy files
+        run: rm -rf .git .github
 
       - name: Deploy Subscription-cut
         uses: appleboy/scp-action@v1
@@ -25,4 +28,3 @@ jobs:
           target: "domains/builtbylt.com/public_html/subscription-cut"
           overwrite: true
           rm: false
-          exclude: ".git,.github"
