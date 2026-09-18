@@ -183,6 +183,27 @@ body {
   .letter-blank { width: min(240px, 100%); }
 }
 
+/* ---------- category spend bars ---------- */
+.category-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.category-bar-label { width: 130px; flex-shrink: 0; font-size: 13.5px; color: var(--ink-soft); }
+.category-bar-track { flex: 1; height: 14px; background: var(--paper); border: 1px solid var(--line); }
+.category-bar-fill { height: 100%; background: var(--stamp); opacity: .85; }
+.category-bar-value { width: 80px; flex-shrink: 0; text-align: right; font-family: var(--font-mono); font-size: 13px; }
+
+/* ---------- onboarding / forms ---------- */
+.onb-item { }
+.onb-fields select, .onb-fields input[type="date"] { font-family: var(--font-body); font-size: 14px; }
+.form-field { margin-bottom: 16px; }
+.form-field label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 5px; }
+.form-field input, .form-field select {
+  width: 100%; font-family: var(--font-body); font-size: 15px; padding: 10px 12px;
+  border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+}
+.form-field input:focus, .form-field select:focus { outline: none; border-color: var(--ink); }
+.form-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.form-row .form-field { flex: 1; min-width: 160px; }
+.danger-link { color: var(--stamp-dark); }
+
 /* ---------- reduced motion / accessibility ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
