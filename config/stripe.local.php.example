@@ -1,0 +1,8 @@
+<?php
+// Copy this file to config/stripe.local.php (gitignored) and fill in your
+// own Stripe account's keys before setting DEPOSIT_FEATURE_ENABLED to true
+// in config/features.php. Get these from https://dashboard.stripe.com/apikeys
+define('STRIPE_SECRET_KEY', 'sk_test_...');
+define('STRIPE_PUBLISHABLE_KEY', 'pk_test_...');
+define('STRIPE_WEBHOOK_SECRET', 'whsec_...');
+define('DEPOSIT_AMOUNT_CENTS', 2500);
