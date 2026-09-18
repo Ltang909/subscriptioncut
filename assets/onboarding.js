@@ -7,8 +7,8 @@
     check.addEventListener("change", () => { fields.hidden = !check.checked; });
 
     const trial = item.querySelector(".onb-trial");
-    const trialEndWrap = item.querySelector(".onb-trial-end-wrap");
-    trial.addEventListener("change", () => { trialEndWrap.hidden = !trial.checked; });
+    const trialEnd = item.querySelector(".onb-trial-end");
+    trial.addEventListener("change", () => { trialEnd.hidden = !trial.checked; });
   });
 
   document.getElementById("onboarding-form").addEventListener("submit", async (e) => {
@@ -51,10 +51,10 @@
       if (res.ok) {
         window.location.href = "dashboard.php";
       } else {
-        status.textContent = "Something went wrong — try again.";
+        status.textContent = "Something went wrong, try again.";
       }
     } catch {
-      status.textContent = "Something went wrong — try again.";
+      status.textContent = "Something went wrong, try again.";
     }
   });
 })();
