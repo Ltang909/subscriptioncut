@@ -45,7 +45,7 @@ foreach ($stmt->fetchAll() as $sub) {
     $name = $sub['custom_name'] ?: ($sub['tier_name'] ?: 'A subscription');
     $price = number_format($sub['price_cents'] / 100, 2);
     $subject = "Renewing soon: {$name} (\${$price})";
-    $body = "{$name} renews on {$sub['next_renewal_on']} — \${$price} / {$sub['cadence']}.\n\n"
+    $body = "{$name} renews on {$sub['next_renewal_on']}: \${$price} / {$sub['cadence']}.\n\n"
           . "Decide now whether to keep it or cancel: sign in to Cutline to review it.\n";
 
     try {
