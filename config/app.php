@@ -10,7 +10,10 @@ define('DB_PATH', dirname(__DIR__) . '/data/cutline.sqlite');
 // local development where there's usually no configured MTA.
 define('MAIL_DRIVER', getenv('CUTLINE_MAIL_DRIVER') ?: 'php_mail');
 define('MAIL_LOG_PATH', dirname(__DIR__) . '/data/mail.log');
-define('MAIL_FROM', 'Cutline <noreply@leontang.ca>');
+// Must match the domain this site actually sends from (builtbylt.com) --
+// a mismatched From domain fails SPF/DMARC alignment and gets silently
+// spam-filtered or dropped by providers like Gmail.
+define('MAIL_FROM', 'Cutline <noreply@builtbylt.com>');
 
 define('SESSION_COOKIE_NAME', 'cutline_session');
 define('SESSION_LIFETIME_DAYS', 30);

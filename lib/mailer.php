@@ -10,5 +10,8 @@ function send_mail(string $to, string $subject, string $body): bool {
         file_put_contents(MAIL_LOG_PATH, $line, FILE_APPEND);
         return true;
     }
-    return @mail($to, $subject, $body, "From: " . MAIL_FROM . "\r\n");
+    $headers = "From: " . MAIL_FROM . "\r\n"
+             . "Content-Type: text/plain; charset=UTF-8\r\n"
+             . "MIME-Version: 1.0\r\n";
+    return @mail($to, $subject, $body, $headers);
 }
