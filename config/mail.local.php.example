@@ -1,0 +1,23 @@
+<?php
+// Copy this file to mail.local.php on the server and fill in the values.
+// mail.local.php is gitignored and survives deploys (SCP deploy does not
+// delete untracked files). Never commit real credentials.
+
+// Use the authenticated-SMTP driver in production. PHP's mail() on shared
+// hosting is frequently throttled or silently dropped.
+putenv('CUTLINE_MAIL_DRIVER=smtp');
+
+// Create the mailbox first in Hostinger hPanel -> Email -> Email Accounts,
+// e.g. noreply@builtbylt.com. Hostinger's SMTP host is shown in
+// hPanel -> Email -> your mailbox -> Connect Apps & Devices.
+putenv('CUTLINE_SMTP_HOST=smtp.hostinger.com');
+putenv('CUTLINE_SMTP_PORT=587');
+putenv('CUTLINE_SMTP_USER=noreply@builtbylt.com');
+putenv('CUTLINE_SMTP_PASS=PASTE_MAILBOX_PASSWORD_HERE');
+// Optional: envelope sender, defaults to CUTLINE_SMTP_USER.
+// putenv('CUTLINE_SMTP_FROM=noreply@builtbylt.com');
+
+// DNS (one-time, in your domain's DNS zone):
+// Add the SPF record Hostinger shows under hPanel -> Email -> Email
+// Deliverability for builtbylt.com so Gmail/Outlook accept the mail.
+// Without it, sign-in emails are likely to be spam-filtered or dropped.
