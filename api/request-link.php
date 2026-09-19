@@ -13,6 +13,21 @@ if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
+// Throttle: max 5 sign-in emails per address per hour. Without this the
+// endpoint can be used to spam someone else's inbox with login emails.
+$stmt = db()->prepare(
+    "SELECT COUNT(*) AS c FROM auth_tokens t
+     JOIN users u ON u.id = t.user_id
+     WHERE u.email = ? AND t.purpose = 'login'
+       AND t.created_at > datetime('now', '-1 hour')"
+);
+$stmt->execute([$email]);
+if ((int)$stmt->fetch()['c'] >= 5) {
+    http_response_code(429);
+    echo json_encode(['error' => 'rate_limited']);
+    exit;
+}
+
 $token = create_login_token($email);
 $scheme = !empty($_SERVER['HTTPS']) ? 'https' : 'http';
 $dir = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']))), '/');

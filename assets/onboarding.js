@@ -48,7 +48,13 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items }),
       });
-      if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        if (data.skipped && data.skipped.length) {
+          status.textContent = `Saved ${data.created}, but skipped: ${data.skipped.join(', ')}. You can add them manually from the dashboard.`;
+          status.hidden = false;
+          return; // stay so the user sees what was skipped
+        }
         window.location.href = "dashboard.php";
       } else {
         status.textContent = "Something went wrong, try again.";
