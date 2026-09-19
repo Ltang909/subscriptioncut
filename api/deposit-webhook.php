@@ -27,11 +27,31 @@ if (!verify_stripe_signature($payload, $sigHeader, STRIPE_WEBHOOK_SECRET)) {
 }
 
 $event = json_decode($payload, true) ?: [];
-if (($event['type'] ?? '') === 'payment_intent.succeeded') {
+$type = $event['type'] ?? '';
+
+if ($type === 'checkout.session.completed') {
+    // This is the reliable signal that a deposit was paid: the Checkout
+    // Session id is known at creation time (unlike payment_intent), and the
+    // event carries the payment intent id we need later for the refund.
+    $sessionId = $event['data']['object']['id'] ?? null;
+    $intentId = $event['data']['object']['payment_intent'] ?? null;
+    if ($sessionId) {
+        db()->prepare(
+            "UPDATE deposits
+             SET status = 'succeeded', stripe_payment_intent_id = COALESCE(?, stripe_payment_intent_id)
+             WHERE stripe_session_id = ? AND status = 'created'"
+        )->execute([$intentId, $sessionId]);
+    }
+} elseif ($type === 'payment_intent.succeeded') {
+    // Fallback for payment intents created outside Checkout (or if the
+    // session id was never stored). Only matches deposits still awaiting
+    // payment so a replayed event can't resurrect a refunded deposit.
     $intentId = $event['data']['object']['id'] ?? null;
     if ($intentId) {
-        db()->prepare("UPDATE deposits SET status = 'succeeded' WHERE stripe_payment_intent_id = ?")
-            ->execute([$intentId]);
+        db()->prepare(
+            "UPDATE deposits SET status = 'succeeded'
+             WHERE stripe_payment_intent_id = ? AND status = 'created'"
+        )->execute([$intentId]);
     }
 }
 

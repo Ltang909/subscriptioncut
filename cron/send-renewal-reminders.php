@@ -64,14 +64,22 @@ foreach ($stmt->fetchAll() as $sub) {
 }
 
 // 2) Roll next_renewal_on forward for anything whose renewal date has passed,
-//    so the field always points to the next upcoming charge.
+//    so the field always points to the next upcoming charge. Loops until the
+//    date is in the future — a single step per run would leave long-overdue
+//    rows showing "Overdue" for days if the cron ever missed a run.
 $past = $pdo->query(
     "SELECT id, next_renewal_on, cadence FROM subscriptions WHERE status = 'active' AND date(next_renewal_on) <= date('now')"
 )->fetchAll();
 
 $advance = $pdo->prepare('UPDATE subscriptions SET next_renewal_on = ?, updated_at = datetime(\'now\') WHERE id = ?');
 foreach ($past as $row) {
-    $advance->execute([advance_renewal($row['next_renewal_on'], $row['cadence']), $row['id']]);
+    $next = $row['next_renewal_on'];
+    $today = date('Y-m-d');
+    $guard = 0;
+    while ($next <= $today && $guard++ < 1200) { // 1200 steps ≈ 23 yrs of weekly; never infinite
+        $next = advance_renewal($next, $row['cadence']);
+    }
+    $advance->execute([$next, $row['id']]);
 }
 
 log_line("Run complete: sent=$sent errors=$errors advanced=" . count($past));

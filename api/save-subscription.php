@@ -19,6 +19,15 @@ $priceDollars = (float)($_POST['price_dollars'] ?? 0);
 $startedOn = $_POST['started_on'] ?? date('Y-m-d');
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $startedOn)) $startedOn = date('Y-m-d');
 
+// A malformed trial date would poison the trial-deadline cron's date()
+// comparisons (date('garbage') is NULL, so the trial is never counted) —
+// reject it rather than storing it.
+$trialEndsOn = trim((string)($_POST['trial_ends_on'] ?? ''));
+if ($trialEndsOn !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $trialEndsOn)) {
+    header('Location: ../subscription-edit.php' . ($id ? '?id=' . $id : '') . '&err=baddate');
+    exit;
+}
+
 $data = [
     'custom_name' => trim((string)($_POST['custom_name'] ?? '')),
     'category' => (string)($_POST['category'] ?? 'other'),
@@ -27,7 +36,7 @@ $data = [
     'cadence' => $cadence,
     'started_on' => $startedOn,
     'is_free_trial' => !empty($_POST['is_free_trial']),
-    'trial_ends_on' => $_POST['trial_ends_on'] ?: null,
+    'trial_ends_on' => $trialEndsOn !== '' ? $trialEndsOn : null,
 ];
 
 if ($data['custom_name'] === '' || $data['price_cents'] <= 0) {

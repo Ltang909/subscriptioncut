@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS reminder_log (
 CREATE TABLE IF NOT EXISTS deposits (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  stripe_session_id TEXT,
   stripe_payment_intent_id TEXT,
   stripe_refund_id TEXT,
   amount_cents INTEGER NOT NULL DEFAULT 2500,
@@ -80,3 +81,6 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_renewal ON subscriptions(next_renewal_on) WHERE status = 'active';
 CREATE INDEX IF NOT EXISTS idx_auth_tokens_hash ON auth_tokens(token_hash);
 CREATE INDEX IF NOT EXISTS idx_sessions_hash ON sessions(session_token_hash);
+-- Catalog names must be unique so a double-seed (two concurrent first
+-- requests) can't create duplicate catalog rows.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_catalog_services_name ON catalog_services(name);

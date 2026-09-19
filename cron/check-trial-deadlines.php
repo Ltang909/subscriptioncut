@@ -4,7 +4,7 @@ if (!DEPOSIT_FEATURE_ENABLED) exit; // dormant unless the feature is turned on
 if (php_sapi_name() !== 'cli') { http_response_code(403); exit('CLI only'); }
 
 require_once __DIR__ . '/../lib/db.php';
-require_once __DIR__ . '/../api/deposit-resolve.php';
+require_once __DIR__ . '/../lib/deposits.php';
 
 $pdo = db();
 

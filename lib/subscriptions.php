@@ -1,13 +1,19 @@
 <?php
 require_once __DIR__ . '/db.php';
 
-function cadence_interval(string $cadence): DateInterval {
-    switch ($cadence) {
-        case 'weekly': return new DateInterval('P1W');
-        case 'annual': return new DateInterval('P1Y');
-        case 'monthly':
-        default: return new DateInterval('P1M');
+// Adds one cadence step to $date. PHP's DateInterval overflows month-ends
+// (Jan 31 + P1M = Mar 3), so monthly/yearly steps clamp to the last day of
+// the target month (Jan 31 -> Feb 28) to keep renewal dates stable.
+function add_cadence(DateTime $date, string $cadence): void {
+    if ($cadence === 'weekly') {
+        $date->add(new DateInterval('P1W'));
+        return;
     }
+    $months = $cadence === 'annual' ? 12 : 1;
+    $day = (int)$date->format('d');
+    $date->modify('first day of +' . $months . ' month');
+    $lastDay = (int)$date->format('t');
+    $date->setDate((int)$date->format('Y'), (int)$date->format('m'), min($day, $lastDay));
 }
 
 // First occurrence of the cadence, starting from $startedOn, that falls on
@@ -15,16 +21,15 @@ function cadence_interval(string $cadence): DateInterval {
 function compute_next_renewal(string $startedOn, string $cadence, ?DateTime $now = null): string {
     $now = $now ?? new DateTime('today');
     $next = new DateTime($startedOn);
-    $interval = cadence_interval($cadence);
     while ($next < $now) {
-        $next->add($interval);
+        add_cadence($next, $cadence);
     }
     return $next->format('Y-m-d');
 }
 
 function advance_renewal(string $currentRenewal, string $cadence): string {
     $date = new DateTime($currentRenewal);
-    $date->add(cadence_interval($cadence));
+    add_cadence($date, $cadence);
     return $date->format('Y-m-d');
 }
 

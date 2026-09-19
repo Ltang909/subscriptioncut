@@ -41,6 +41,9 @@ function val($sub, $key, $default = '') { return $sub ? esc($sub[$key]) : $defau
     <div class="wrap-narrow">
       <div class="card">
         <h1 style="font-size:22px;font-weight:800;margin:0 0 20px;"><?= $sub ? 'Edit subscription' : 'Add a subscription' ?></h1>
+        <?php if (($_GET['err'] ?? '') === 'baddate'): ?>
+          <p class="status-msg" style="color:#b42318;">That trial end date wasn't valid — please use the date picker.</p>
+        <?php endif; ?>
         <form method="post" action="api/save-subscription.php">
           <?php if ($sub): ?><input type="hidden" name="id" value="<?= (int)$sub['id'] ?>" /><?php endif; ?>
 
@@ -67,7 +70,7 @@ function val($sub, $key, $default = '') { return $sub ? esc($sub[$key]) : $defau
           <div class="form-row">
             <div class="form-field">
               <label for="f-price">Price ($)</label>
-              <input id="f-price" name="price_dollars" type="number" step="0.01" min="0" required value="<?= $sub ? esc(number_format($sub['price_cents'] / 100, 2, '.', '')) : '' ?>" />
+              <input id="f-price" name="price_dollars" type="number" step="0.01" min="0.01" required value="<?= $sub ? esc(number_format($sub['price_cents'] / 100, 2, '.', '')) : '' ?>" />
             </div>
             <div class="form-field">
               <label for="f-cadence">Billed</label>
