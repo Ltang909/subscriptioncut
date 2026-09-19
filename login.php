@@ -53,7 +53,15 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       body: JSON.stringify({ email }),
     });
     const data = await res.json();
-    status.textContent = data.ok ? 'Check your email for a sign-in link.' : 'Something went wrong, try again.';
+    if (data.ok) {
+      status.textContent = 'Check your email for a sign-in link.';
+    } else if (data.error === 'rate_limited') {
+      status.textContent = 'Too many requests — please wait a bit and try again.';
+    } else if (data.error === 'email_failed') {
+      status.textContent = 'We couldn\u2019t send the email right now. Please try again in a minute.';
+    } else {
+      status.textContent = 'Something went wrong, try again.';
+    }
   } catch {
     status.textContent = 'Something went wrong, try again.';
   }

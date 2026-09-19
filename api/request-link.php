@@ -37,6 +37,14 @@ $body = "Click below to sign in to Cutline. This link expires in " . LOGIN_TOKEN
       . $link . "\n\n"
       . "If you didn't request this, you can ignore this email.\n";
 
-send_mail($email, 'Your Cutline sign-in link', $body);
+$sent = send_mail($email, 'Your Cutline sign-in link', $body);
+if (!$sent) {
+    // The mailer logs the underlying reason to data/mail-errors.log.
+    // Tell the user the truth instead of "check your email".
+    error_log("request-link: send_mail failed for {$email}");
+    http_response_code(500);
+    echo json_encode(['error' => 'email_failed']);
+    exit;
+}
 
 echo json_encode(['ok' => true]);
